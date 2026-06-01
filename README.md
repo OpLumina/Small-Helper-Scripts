@@ -1,6 +1,6 @@
 # Custom Shell Utilities
 
-A lightweight collection of Bash functions and aliases to streamline directory analysis, file backups, PDF splitting, and Tor-routed web requests.
+A lightweight collection of Bash functions and aliases to streamline basic terminal tasks (like pdf splitting, directory analysis, and file management
 
 ---
 
