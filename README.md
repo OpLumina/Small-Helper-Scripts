@@ -10,8 +10,8 @@ A lightweight collection of Bash functions and aliases to streamline basic termi
 Analyzes a directory or file to calculate total size, item count, and total lines of text.
 * **Usage:** `cntsz [-d] [-e exclude_pattern] [target]`
 * **Flags:**
-    * `-d`: Displays the directory tree structure (requires `tree`).
-    * `-e`: Excludes specific patterns/folders (e.g., `-e node_modules -e .git`).
+    * `-d`: (Debug) Displays the directory tree structure (requires `tree`).
+    * `-e`: (Exclude) Excludes specific patterns/folders (e.g., `-e node_modules -e .git`).
 
 ### 2. `bak` (Quick Backup)
 Creates a quick `.bak` copy of a specified file in the target destination.
