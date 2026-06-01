@@ -30,9 +30,12 @@ An alias that routes `curl` through `proxychains4` using standard Tor traffic, b
 
 ---
 
-## ⚙️ Installation
+## Installation
 
 Copy these functions into your `~/.bashrc` or `~/.zshrc` file, then reload your shell:
 
 ```bash
+sudo apt install qpdf
+# Then add functions to ~/.bashrc and reset terminal or use:
 source ~/.bashrc
+```
