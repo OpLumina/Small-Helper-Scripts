@@ -88,3 +88,114 @@ pdfsplit() {
     done
     echo "Done."
 }
+
+cntsz() {
+    local excludes=()
+    local show_tree=0
+    local OPTIND=1
+    local opt
+
+    # 1. Parse options into arrays/flags
+    while getopts "e:d" opt; do
+        case "$opt" in
+            e) excludes+=("$OPTARG") ;;
+            d) show_tree=1 ;;
+            *) echo "Usage: cntsz [-d] [-e exclude_pattern] [target]"; return 1 ;;
+        esac
+    done
+    shift $((OPTIND-1))
+
+    local target="${1:-.}"
+
+    if [ ! -e "$target" ]; then
+        echo "Error: '$target' does not exist."
+        return 1
+    fi
+
+    # 2. Calculate size
+    local size
+    if [ ${#excludes[@]} -gt 0 ]; then
+        local du_args=()
+        for exc in "${excludes[@]}"; do
+            du_args+=(--exclude="$exc")
+        done
+        size=$(du -sh "${du_args[@]}" "$target" 2>/dev/null | cut -f1)
+    else
+        size=$(du -sh "$target" 2>/dev/null | cut -f1)
+    fi
+    echo "Size:  $size"
+
+    # 3. Process Directory vs File
+    if [ -d "$target" ]; then
+        local count
+        local lines
+
+        if [ ${#excludes[@]} -gt 0 ]; then
+            # Count items excluding patterns
+            count=0
+            for item in "$target"/* "$target"/.*; do
+                [[ "$item" == */. || "$item" == */.. ]] && continue
+                [ ! -e "$item" ] && [ ! -L "$item" ] && continue
+                
+                local match=0
+                for exc in "${excludes[@]}"; do
+                    if [[ "$(basename "$item")" == $exc || "$item" == *$exc* ]]; then
+                        match=1
+                        break
+                    fi
+                done
+                [ "$match" -eq 0 ] && ((count++))
+            done
+            
+            # Build native -not -path filters for find
+            local find_args=()
+            for exc in "${excludes[@]}"; do
+                local clean_exc="${exc#\*}"
+                clean_exc="${clean_exc%\*}"
+                find_args+=("-not" "-path" "*/$clean_exc*")
+            done
+            
+            lines=$(find "$target" -type f "${find_args[@]}" -exec wc -l {} + 2>/dev/null | awk '{total += $1} END {print total}')
+        else
+            count=$(ls -A "$target" | wc -l)
+            lines=$(find "$target" -type f -exec wc -l {} + 2>/dev/null | awk '{total += $1} END {print total}')
+        fi
+
+        echo "Count: $count items"
+        echo "Lines: ${lines:-0}"
+
+        # 4. Optional Tree Output (Only for directories)
+        if [ "$show_tree" -eq 1 ]; then
+            echo -e "\nStructure:"
+            if [ ${#excludes[@]} -gt 0 ]; then
+                local tree_args=()
+                for exc in "${excludes[@]}"; do
+                    # Strip asterisks first, then wrap in wildcards so tree -I catches __pycache__
+                    local clean_exc="${exc#\*}"
+                    clean_exc="${clean_exc%\*}"
+                    tree_args+=("-I" "*${clean_exc}*")
+                done
+                tree "${tree_args[@]}" "$target"
+            else
+                tree "$target"
+            fi
+        fi
+    else
+        # For a single file, check against excludes
+        local excluded=0
+        for exc in "${excludes[@]}"; do
+            if [[ "$target" == $exc || "$target" == *$exc* ]]; then
+                excluded=1
+                break
+            fi
+        done
+
+        if [ "$excluded" -eq 1 ]; then
+            echo "Count: 0 items (Excluded)"
+            echo "Lines: 0"
+        else
+            local lines=$(wc -l < "$target" 2>/dev/null)
+            echo "Lines: ${lines:-0}"
+        fi
+    fi
+}
