@@ -17,6 +17,7 @@ Analyzes a directory or file to calculate total size, item count, and total line
 Creates a quick `.bak` copy of a specified file in the target destination.
 * **Usage:** `bak <file> [destination_directory]`
 * **Example:** `bak config.toml ~/.backup` (Defaults to the current directory if destination is omitted).
+* **Output:** ~/.backup/config.toml.bak
 
 ### 3. `pdfsplit` (PDF Splitter)
 Splits one or more PDF files into chunks based on a maximum page count per file.
