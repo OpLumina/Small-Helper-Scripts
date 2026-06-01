@@ -1,6 +1,6 @@
 # Custom Shell Utilities
 
-A lightweight collection of Bash functions and aliases to streamline directory analysis, file backups, PDF splitting, and stealthy web requests.
+A lightweight collection of Bash functions and aliases to streamline directory analysis, file backups, PDF splitting, and Tor-routed web requests.
 
 ---
 
@@ -19,20 +19,20 @@ Creates a quick `.bak` copy of a specified file in the target destination.
 * **Example:** `bak config.toml ~/.backup` (Defaults to the current directory if destination is omitted).
 
 ### 3. `pdfsplit` (PDF Splitter)
-Splits one or more PDF files into smaller chunks based on a maximum page count per file.
+Splits one or more PDF files into chunks based on a maximum page count per file.
 * **Dependencies:** `qpdf`
 * **Usage:** `pdfsplit <pages_per_file> <input_file(s)> <output_directory_or_path>`
 * **Example:** `pdfsplit 5 document.pdf ./output/`
 
-### 4. `bcurl` (Bypass/Browser Curl)
-An alias that routes `curl` through `proxychains4` and injects realistic browser headers to bypass strict user-agent and bot filters.
+### 4. `bcurl` (Tor Browser Curl)
+An alias that routes `curl` through `proxychains4` using standard Tor traffic, bundled with standard browser headers for consistent web rendering.
 * **Usage:** `bcurl https://example.com`
 
 ---
 
 ## ⚙️ Installation
 
-Copy these functions into your `~/.bashrc`, `~/.zshrc`, or local aliases file, then reload your shell:
+Copy these functions into your `~/.bashrc` or `~/.zshrc` file, then reload your shell:
 
 ```bash
 source ~/.bashrc
