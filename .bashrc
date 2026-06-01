@@ -89,6 +89,7 @@ pdfsplit() {
     echo "Done."
 }
 
+# Counts File/Folder size, Lines, and Items
 cntsz() {
     local excludes=()
     local show_tree=0
